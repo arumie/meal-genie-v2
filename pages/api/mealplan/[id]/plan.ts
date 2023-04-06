@@ -30,18 +30,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const auth: Auth = JSON.parse(req.cookies["pb_auth"] ?? "{}").model;
-  
-  const { id } = req.query
+
+  const { id } = req.query;
   try {
-    const recordId: string = (id instanceof Array ? id[0] : id) ?? '';
-    const record = await pb.collection("mealplans").getOne(recordId);
-    if (req.method === 'GET') {
+    const recordId: string = (id instanceof Array ? id[0] : id) ?? "";
+    const record = await pb.collection("mealplans").getOne(recordId, { '$autoCancel': false });
+    if (record.plan != null) {
       res.status(200).json(record.plan);
     } else {
       const result = await getPlan(
         record.context as ChatCompletionRequestMessage[],
         record.days,
-        'gpt-4',
+        "gpt-4",
         auth
       );
 
@@ -51,7 +51,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   } catch (e) {
     const error = e as ClientResponseError;
     res
-      .status(error.status)
+      .status(error?.status == null || error.status === 0 ? 500 : error.status)
       .json({ message: `Unable to create meal plan`, error: e });
   }
 }
@@ -87,7 +87,7 @@ async function createGPTCompletion(
     const planMessages = messages.concat([
       {
         role: "user",
-        content: `Give me steps by step directions for the meal(s) of day ${i}. Your response should be in JSON format {meals: {"description": string, "ingredients": {"name": string, "quantity": number, "unit": string}[], "directions": string[]}[]}. Values should be in danish.`,
+        content: `Give me steps by step directions for the meal(s) of day ${i}. Your response should be in JSON format {meals: {"description": string, "ingredients": {"name": string, "quantity": number, "unit": string}[], "directions": string[]}[]}.`,
       },
     ]);
     const dayData = openai
@@ -111,7 +111,7 @@ async function createGPTCompletion(
     return values.map((value, index) => {
       const json = parseJson(value.data.choices[0].message?.content);
       return {
-        day: `Dag ${index + 1}`,
+        day: `Day ${index + 1}`,
         ...json,
       };
     });

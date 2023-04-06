@@ -1,18 +1,13 @@
 export type MealPlanParams = {
+  name: string,
   days: string;
   persons: string;
   breakfast: boolean;
   lunch: boolean;
   dinner: boolean;
   preferences?: string;
-  ingredients: {
-    value?: string;
-    days?: number;
-  }[];
-  types: {
-    value?: string;
-    days?: number;
-  }[];
+  ingredients: string[];
+  types: string[];
   model: string;
 };
 
@@ -45,12 +40,14 @@ function getMeals(params: MealPlanParams): string {
   if (res.length === 1) {
     return `Only include ${res[0]}. `;
   } else {
-    return `Only include ${res.slice(0, -1).join(", ")} and ${res.slice(-1)[0]}. `;
+    return `Only include ${res.slice(0, -1).join(", ")} and ${
+      res.slice(-1)[0]
+    }. `;
   }
 }
 
 function getPreferences(params: MealPlanParams): string {
-  if (params.preferences == null) {
+  if (params.preferences == null || params.preferences === "") {
     return "";
   }
 
@@ -63,8 +60,8 @@ function getIngredientPreferences(params: MealPlanParams): string {
   }
 
   const i = params.ingredients.map(
-    (v) =>
-      `The mealplan must include ${v.value} for ${v.days} ${(v.days ?? 0) > 1 ? 'days': 'day'}. `
+    (ingredient) =>
+      `The mealplan must include ${ingredient} for least one of the days`
   );
 
   return i.join(". ") + ". ";
@@ -76,8 +73,7 @@ function getTypesPreferences(params: MealPlanParams): string {
   }
 
   const i = params.types.map(
-    (v) =>
-      `The mealplan must include ${v.days} ${(v.days ?? 0) > 1 ? 'days': 'day'} with ${v.value}`
+    (type) => `The mealplan must include ${type} food for least one of the days`
   );
 
   return i.join(". ") + ". ";

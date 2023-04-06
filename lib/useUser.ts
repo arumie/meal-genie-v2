@@ -14,12 +14,17 @@ export const useUser = () => {
   }
 }
 
-export const useUserProtected = ({ redirectTo = "" } = {}) => {
+export const useUserProtected = ({ redirectTo = "/login" } = {}) => {
   const nextCookies = cookies();
   const pb_auth = nextCookies.get("pb_auth");
   let user = null;
+  
   if (!pb_auth) {
-    redirect(redirectTo);
+    try {
+      redirect(redirectTo);
+    } catch (e) {
+      console.log(e)
+    }
   } else {
     user = JSON.parse(pb_auth.value);
   }

@@ -3,6 +3,7 @@
 import { logout } from "@meal-genie/lib/auth";
 import { pb } from "@meal-genie/lib/pocketbase";
 import { useRouter } from "next/navigation";
+import { HiLogout } from "react-icons/hi";
 import { useSWRConfig } from "swr";
 
 function LogoutButton() {
@@ -10,15 +11,14 @@ function LogoutButton() {
   const { mutate } = useSWRConfig();
   const handleLogout = async () => {
     pb.authStore.clear();
-    logout();
+    await logout();
     //Clear all SWR data
     mutate(/* match all keys */ () => true, undefined, false);
-    await router.push("/login");
     router.refresh();
   };
   return (
     <>
-      <a onClick={handleLogout}>Logout</a>
+      <a onClick={handleLogout}><HiLogout className="mr-2"></HiLogout>Logout</a>
     </>
   );
 }

@@ -81,6 +81,15 @@ function NewMealPlanBtn() {
     setLoading(false);
   };
 
+  const handleListMealplans = async () => {
+    setLoading(true);
+    await fetch(
+      "/api/mealplan/list"
+    ).catch((e: Error) => e);
+    
+    setLoading(false);
+  };
+
   return (
     <>
       <button
@@ -112,6 +121,12 @@ function NewMealPlanBtn() {
         onClick={handleUpdateDay}
       >
         Update Day 1
+      </button>
+      <button
+        className={classNames({'btn btn-primary text-neutral': true, 'loading': loading})}
+        onClick={handleListMealplans}
+      >
+        Get all mealplans
       </button>
     </>
   );

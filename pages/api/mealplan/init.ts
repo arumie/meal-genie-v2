@@ -66,6 +66,7 @@ async function GetMealPlan(req: InitRequest, res: NextApiResponse, auth: Auth) {
     context: mealPlan.messages,
     ingredients: null,
     plan: null,
+    name: body.name,
   };
 
   try {

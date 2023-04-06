@@ -27,13 +27,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const { username, password } = req.body;
-    console.log(username, password)
     await pb.collection("users").authWithPassword(username, password);
-    console.log(pb.authStore);
-    
 
     if (pb.authStore.isValid) {
-      res.setHeader('set-cookie', pb.authStore.exportToCookie())
+      const expirationDate = new Date();
+      expirationDate.setHours(expirationDate.getHours() + 2)
+      res.setHeader('set-cookie', pb.authStore.exportToCookie({expires: expirationDate}))
       res.status(200).json({ message: `Logged in successfully` })
     } else {
       res.status(400).json({ message: `Unable to login` })

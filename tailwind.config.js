@@ -1,10 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./app/**/*.{jsx,tsx}"],
+  content: ["./app/**/*.{jsx,tsx}", "./components/**/*.{jsx,tsx}"],
   theme: {
     extend: {},
   },
-  plugins: [require("daisyui")],
+  plugins: [require("@tailwindcss/typography"), require("daisyui")],
   daisyui: {
     styled: true,
     themes: [
@@ -19,6 +19,7 @@ module.exports = {
           neutral: "#e5e7eb",
 
           "base-100": "#f3f4f6",
+          "base-300": "#374151",
 
           info: "#0CA5E9",
 

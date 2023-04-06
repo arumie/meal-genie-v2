@@ -1,7 +1,6 @@
 "use client";
+import { signup } from "@meal-genie/lib/auth";
 import classNames from "classnames";
-import { login, signup } from "@meal-genie/lib/auth";
-import { pb } from "@meal-genie/lib/pocketbase";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -45,7 +44,6 @@ function SignupForm() {
   return (
     <div>
       <form className="form-control" onSubmit={handleSubmit(handleSignup)}>
-      <span className="divider"></span>
         <label className="label">
           <span className="label-text">Name</span>
         </label>

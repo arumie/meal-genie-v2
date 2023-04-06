@@ -69,3 +69,32 @@ export const logout = async () => {
       console.error("Error:", error);
     });
 };
+
+export interface CustomError extends Error {
+  status: number;
+  info: any;
+}
+
+export const post = async (url: string, body: string = '{}') => {
+  const res = await fetch(url, {
+    method: "POST",
+    body: body,
+    next: { revalidate: 10 },
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  })
+
+  if (!res.ok) {
+    
+    const info = await res.json();
+    const error = new Error(info.message) as CustomError
+    // Attach extra info to the error object.
+    error.info = info; 
+    error.status = res.status
+    throw error
+  }
+
+  return res.json();
+}

@@ -36,10 +36,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query
   try {
     const recordId: string = (id instanceof Array ? id[0] : id) ?? '';
-    const record = await pb.collection("mealplans").getOne(recordId);
+    const record = await pb.collection("mealplans").getOne(recordId, { '$autoCancel': false });
 
-    if (req.method === 'GET') {
-      res.status(200).json(record.plan);
+    if (record.ingredients != null) {
+      res.status(200).json(record.ingredients);
     } else {
       const result = await getIngredients(record.context, "gpt-4", auth);
 
@@ -49,9 +49,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       res.status(200).json(result);
     }
   } catch (e) {
-    const error = e as ClientResponseError;
+    const error = e as ClientResponseError;    
     res
-      .status(error.status)
+      .status(error?.status == null || error.status === 0 ? 500: error.status)
       .json({ message: `Unable to create meal plan`, error: e });
   }
 }

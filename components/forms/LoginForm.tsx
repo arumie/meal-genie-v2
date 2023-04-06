@@ -1,10 +1,10 @@
 "use client";
-import classNames from "classnames";
 import { login } from "@meal-genie/lib/auth";
-import { pb } from "@meal-genie/lib/pocketbase";
-import { redirect, useRouter } from "next/navigation";
+import classNames from "classnames";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+
 
 function LoginForm() {
   const {
@@ -17,6 +17,7 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
   const router = useRouter();
+  const path = usePathname();
 
   const handleLogin = async (data: any) => {
     setLoading(true);
@@ -29,11 +30,11 @@ function LoginForm() {
         throw Error(response.statusText);
       }
       setStatus("Logged in successfully ✅");
+      router.push(path + '#');
       router.refresh();
-      router.replace("/");
     } catch (e) {
       console.log(e);
-      setStatus(`Unable to Signup: ${(e as Error).message}`);
+      setStatus(`Unable to log in: ${(e as Error).message}`);
     }
     setLoading(false);
   };

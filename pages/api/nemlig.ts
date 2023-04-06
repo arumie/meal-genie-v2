@@ -15,6 +15,12 @@ export type NemligProduct = {
     gptName: string
 }
 
+export type NemligRequest = {
+    productNames: string[],
+    username: string,
+    password: string,
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const productList: Array<NemligProduct> = [];
     const productPromises: Array<Promise<NemligProduct>> = []
